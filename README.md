@@ -12,7 +12,7 @@ A real-time stock price prediction application for Indonesian blue-chip stocks u
 
 ## 🛠️ Tech Stack
 
-### Client
+### Frontend
 - **Next.js** (TypeScript)
 - **Tailwind CSS** for styling
 
