@@ -1,14 +1,8 @@
 "use client";
-import Footer from "@/components/footer";
-import Header from "@/components/header";
-import Dashboard from "@/dashboard/page";
+import Dashboard from "@/app/dashboard/page";
 
 export default function Home() {
   return (
-    <div>
-      <Header/>
-      <Dashboard/>
-      <Footer/>
-    </div>
+    <Dashboard/>
   );
 }

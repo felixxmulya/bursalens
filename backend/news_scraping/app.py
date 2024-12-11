@@ -147,10 +147,10 @@ def get_detail(slug):
 def get_summary():
     category = request.args.get('category', 'saham')  # Default category is 'saham'
     data = get_data(category)
-    summary = [{"article": i + 1, "data": article} for i, article in enumerate(data[:10])]
+    summary = [{"article": i + 1, "data": article} for i, article in enumerate(data[:102])]
     return jsonify(summary)
 
-@app.route('/detail', methods=['GET'])
+@app.route('/details', methods=['GET'])
 def get_article_detail():
     category = request.args.get('category', 'saham')  # Default category is 'saham'
     data = get_data(category)
@@ -160,4 +160,4 @@ def get_article_detail():
     return jsonify({"error": "No articles found"}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port='5001', debug=True)
