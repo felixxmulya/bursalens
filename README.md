@@ -1,4 +1,4 @@
-# Indonesia Stock Prediction 📈
+# BursaLens Indonesia Stock Prediction 📈
 
 A real-time stock price prediction application for Indonesian blue-chip stocks using an LSTM neural network model. This app allows users to compare the predicted stock prices with real-time market data.
 
@@ -33,6 +33,6 @@ A real-time stock price prediction application for Indonesian blue-chip stocks u
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/indonesia-stock-prediction.git
-cd indonesia-stock-prediction
+git clone https://github.com/your-username/bursalens.git
+cd bursalens
 ```
