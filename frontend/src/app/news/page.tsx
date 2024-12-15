@@ -66,7 +66,6 @@ export default function News() {
 
     const featuredNews = news[0]?.data;
     const displayedNews = news.slice(1, visibleNews + 1);
-    const hasMore = visibleNews < news.length - 1;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">

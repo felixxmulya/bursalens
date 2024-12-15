@@ -5,5 +5,5 @@ pandas
 yfinance
 scikit-learn
 tensorflow
-load_model
-flask_cors
+lightgbm
+ta

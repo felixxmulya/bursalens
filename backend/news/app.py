@@ -143,7 +143,7 @@ def get_detail(slug):
 
     return result
 
-@app.route('/summary', methods=['GET'])
+@app.route('/news', methods=['GET'])
 def get_summary():
     category = request.args.get('category', 'saham')  # Default category is 'saham'
     data = get_data(category)
@@ -160,4 +160,4 @@ def get_article_detail():
     return jsonify({"error": "No articles found"}), 404
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='5001', debug=True)
+    app.run(host='0.0.0.0', debug=True)

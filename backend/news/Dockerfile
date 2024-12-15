@@ -45,10 +45,10 @@ USER appuser
 COPY . .
 
 # Expose the port that the application listens on.
-EXPOSE 5001
+EXPOSE 80
 
 # Define environment variable
 ENV FLASK_APP=app.py
 
 # Run the application
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
+CMD ["python", "app.py"]
