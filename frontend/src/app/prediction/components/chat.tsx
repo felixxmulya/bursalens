@@ -1,22 +1,21 @@
-// app/prediction/components/ChatSection.tsx
 import { useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane, faRobot, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Message } from '@/app/prediction/components/stock';
 
-interface ChatSectionProps {
+interface chatProps {
     messages: Message[];
     input: string;
     setInput: (input: string) => void;
     handleSendMessage: () => void;
 }
 
-export default function ChatSection({ 
+export default function Chat({ 
     messages, 
     input, 
     setInput, 
     handleSendMessage 
-}: ChatSectionProps) {
+}: chatProps) {
     const chatRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

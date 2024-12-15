@@ -1,4 +1,3 @@
-// app/prediction/page.tsx
 'use client';
 import { useState } from 'react';
 import SearchBar from './components/search';

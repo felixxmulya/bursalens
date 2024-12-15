@@ -1,20 +1,19 @@
-// app/prediction/components/AnalysisSection.tsx
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { StockData } from './stock';
 
-interface AnalysisSectionProps {
+interface analysisProps {
     selectedStock: StockData | null;
     predictionTimeframe: '1m' | '3m';
     setPredictionTimeframe: (timeframe: '1m' | '3m') => void;
 }
 
-export default function AnalysisSection({ 
+export default function Analysis({ 
     selectedStock, 
     predictionTimeframe, 
     setPredictionTimeframe 
-}: AnalysisSectionProps) {
+}: analysisProps) {
     return (
         <div className="bg-white rounded-2xl shadow-sm p-6">
             <div className="mb-6">
