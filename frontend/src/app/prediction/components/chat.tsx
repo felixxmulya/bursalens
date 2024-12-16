@@ -25,9 +25,8 @@ export default function Chat({
     }, [messages]);
 
     return (
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
+        <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm p-6">
             <h2 className="text-2xl font-bold mb-6">AI Stock Advisor</h2>
-            
             <div ref={chatRef} className="bg-gray-50 rounded-xl p-4 h-[500px] overflow-y-auto mb-4">
                 {messages.map((message, index) => (
                     <div 

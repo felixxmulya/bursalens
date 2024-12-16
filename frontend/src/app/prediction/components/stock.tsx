@@ -1,4 +1,5 @@
 export interface StockData {
+    technicalIndicators: any;
     symbol: string;
     name: string;
     currentPrice: number;
