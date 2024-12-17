@@ -3,134 +3,223 @@ from flask_cors import CORS
 import yfinance as yf
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout, GRU
-from datetime import datetime, timedelta
+from sklearn.preprocessing import RobustScaler
+from datetime import timedelta
 import ta
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+from sklearn.metrics import mean_absolute_percentage_error, r2_score
+import math
 
 app = Flask(__name__)
+CORS(app)
 
-CORS(app, resources={
-    r"/*": {  # Match all routes instead of just /stock/*
-        "origins": ["http://localhost:3000"],  # Explicitly allow your Next.js development server
-        "methods": ["GET", "POST", "OPTIONS"],  # Allow specific HTTP methods
-        "allow_headers": ["Content-Type", "Authorization"]  # Allow specific headers
-    }
-})
-
-
-
-IDX_STOCKS = {
+DX_STOCKS = {
     'BBCA': 'Bank Central Asia',
     'BBRI': 'Bank Rakyat Indonesia',
     'BMRI': 'Bank Mandiri',
     'TLKM': 'Telkom Indonesia',
     'ASII': 'Astra International',
+    'UNVR': 'Unilever Indonesia',
+    'ICBP': 'Indofood CBP Sukses Makmur',
+    'HMSP': 'HM Sampoerna',
+    'GGRM': 'Gudang Garam',
+    'KLBF': 'Kalbe Farma',
+    'INDF': 'Indofood Sukses Makmur',
+    'PGAS': 'Perusahaan Gas Negara',
+    'PTBA': 'Bukit Asam',
+    'ADRO': 'Adaro Energy',
+    'ANTM': 'Aneka Tambang',
+    'BBNI': 'Bank Negara Indonesia',
+    'ERAA': 'Erajaya Swasembada',
+    'JSMR': 'Jasa Marga',
+    'MNCN': 'Media Nusantara Citra',
+    'SMGR': 'Semen Indonesia',
+    'TINS': 'Timah',
+    'UNTR': 'United Tractors',
+    'WIKA': 'Wijaya Karya',
 }
 
-class EnhancedStockPredictor:
+class StockPredictor:
     def __init__(self):
-        self.scaler = MinMaxScaler()
-        self.lookback_period = 60
+        self.scaler = RobustScaler()
+        self.lookback_period = 30
         self.model = None
-
-    def prepare_technical_features(self, df):
-        """Calculate comprehensive technical indicators"""
-        # Trend Indicators
-        df['SMA_20'] = ta.trend.sma_indicator(df['Close'], window=20)
-        df['EMA_20'] = ta.trend.ema_indicator(df['Close'], window=20)
-        df['MACD'] = ta.trend.macd_diff(df['Close'])
-        
-        # Momentum Indicators
-        df['RSI'] = ta.momentum.rsi(df['Close'])
-        df['Stoch'] = ta.momentum.stoch(df['High'], df['Low'], df['Close'])
-        df['ROC'] = ta.momentum.roc(df['Close'])
-        
-        # Volatility Indicators
-        bb = ta.volatility.BollingerBands(df['Close'])
-        df['BB_upper'] = bb.bollinger_hband()
-        df['BB_lower'] = bb.bollinger_lband()
-        df['ATR'] = ta.volatility.average_true_range(df['High'], df['Low'], df['Close'])
-
-        return df.fillna(method='ffill')
+        self.validation_split = 0.2
+        self.min_training_size = 100
+        self.last_scale_params = None
 
     def create_model(self, input_shape):
+        """Create LSTM model architecture"""
         model = Sequential([
-            LSTM(100, return_sequences=True, input_shape=input_shape),
+            LSTM(units=50, return_sequences=True, input_shape=input_shape),
             Dropout(0.2),
-            GRU(50, return_sequences=True),
+            LSTM(units=50, return_sequences=False),
             Dropout(0.2),
-            LSTM(50, return_sequences=False),
-            Dropout(0.2),
-            Dense(50, activation='relu'),
-            Dense(1)
+            Dense(units=1)
         ])
-        model.compile(optimizer='adam', loss='mse')
+        
+        model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
         return model
 
-    def prepare_data(self, data):
-        # Scale the data
-        scaled_data = self.scaler.fit_transform(data['Close'].values.reshape(-1, 1))
+    def add_features(self, df):
+        """Create technical indicators for LSTM input"""
+        df = df.copy()
         
-        X, y = [], []
-        for i in range(self.lookback_period, len(scaled_data)):
-            X.append(scaled_data[i-self.lookback_period:i, 0])
-            y.append(scaled_data[i, 0])
-            
-        return np.array(X), np.array(y)
+        # Price-based features
+        df['Returns'] = df['Close'].pct_change()
+        df['SMA20'] = df['Close'].rolling(window=20).mean()
+        df['SMA50'] = df['Close'].rolling(window=50).mean()
+        
+        # Momentum indicators
+        df['RSI'] = ta.momentum.rsi(df['Close'])
+        df['ROC'] = ta.momentum.roc(df['Close'])
+        
+        # Trend indicators
+        df['MACD'] = ta.trend.macd_diff(df['Close'])
+        
+        # Volatility indicators
+        bollinger = ta.volatility.BollingerBands(df['Close'])
+        df['BB_width'] = (bollinger.bollinger_hband() - bollinger.bollinger_lband()) / df['Close']
+        
+        # Volume features
+        df['Volume_SMA'] = df['Volume'].rolling(window=20).mean()
+        df['Volume_Ratio'] = df['Volume'] / df['Volume_SMA']
+        
+        return df.ffill().fillna(0)
 
-    def train_model(self, data):
-        X, y = self.prepare_data(data)
-        
-        # Split data for validation
-        train_size = int(len(X) * 0.8)
-        X_train = X[:train_size]
-        y_train = y[:train_size]
-        
-        # Create and train model
-        self.model = self.create_model((X.shape[1], 1))
-        self.model.fit(
-            X_train, 
-            y_train, 
-            epochs=50, 
-            batch_size=32, 
-            validation_split=0.1, 
-            verbose=0
-        )
-        
-        return X, y
+    def prepare_data(self, df):
+        """Prepare data for LSTM training"""
+        try:
+            data = self.add_features(df)
+            
+            feature_columns = ['Close', 'Returns', 'SMA20', 'SMA50', 'RSI', 'ROC', 
+                             'MACD', 'BB_width', 'Volume_Ratio']
+            
+            # Ensure all required columns exist
+            for col in feature_columns:
+                if col not in data.columns:
+                    print(f"Missing column: {col}")
+                    return None, None, None
+            
+            # Scale the features
+            scaled_data = self.scaler.fit_transform(data[feature_columns])
+            
+            X, y = [], []
+            for i in range(self.lookback_period, len(scaled_data)):
+                X.append(scaled_data[i-self.lookback_period:i])
+                y.append(scaled_data[i, 0])  # Predict the scaled closing price
+            
+            if len(X) < self.min_training_size:
+                print(f"Insufficient data: {len(X)} samples, need at least {self.min_training_size}")
+                return None, None, None
+            
+            self.last_scale_params = {
+                'n_features': len(feature_columns),
+                'feature_columns': feature_columns
+            }
+                
+            return np.array(X), np.array(y), feature_columns
+            
+        except Exception as e:
+            print(f"Error in prepare_data: {str(e)}")
+            return None, None, None
+
+    def train_model(self, df):
+        """Train LSTM model with prepared data"""
+        try:
+            X, y, feature_columns = self.prepare_data(df)
+            
+            if X is None:
+                raise ValueError("Failed to prepare data")
+            
+            if len(X) < self.min_training_size:
+                raise ValueError(f"Insufficient data: {len(X)} samples, need at least {self.min_training_size}")
+            
+            # Create and train the model
+            self.model = self.create_model(input_shape=(X.shape[1], X.shape[2]))
+            
+            # Split into training and validation sets
+            split_idx = int(len(X) * (1 - self.validation_split))
+            X_train, X_val = X[:split_idx], X[split_idx:]
+            y_train, y_val = y[:split_idx], y[split_idx:]
+            
+            # Train the model
+            self.model.fit(
+                X_train, y_train,
+                validation_data=(X_val, y_val),
+                epochs=50,
+                batch_size=32,
+                verbose=1
+            )
+            
+            return True
+            
+        except Exception as e:
+            print(f"Error in train_model: {str(e)}")
+            return False
 
     def predict_future(self, data, days=30):
-        if self.model is None:
-            self.train_model(data)
+        """Generate future predictions using LSTM"""
+        try:
+            if len(data) < self.min_training_size + self.lookback_period:
+                print(f"Warning: Limited data available. Predictions may be less accurate.")
             
-        # Prepare last sequence
-        scaled_data = self.scaler.transform(data['Close'].values.reshape(-1, 1))
-        last_sequence = scaled_data[-self.lookback_period:]
-        
-        # Generate predictions
-        future_predictions = []
-        current_sequence = last_sequence.copy()
-        
-        for _ in range(days):
-            next_pred = self.model.predict(current_sequence.reshape(1, self.lookback_period, 1))
-            future_predictions.append(next_pred[0, 0])
+            if self.model is None:
+                if not self.train_model(data):
+                    raise ValueError("Failed to train model")
             
-            # Update sequence
-            current_sequence = np.roll(current_sequence, -1)
-            current_sequence[-1] = next_pred
+            # Prepare the most recent data for prediction
+            X, _, feature_columns = self.prepare_data(data)
+            if X is None:
+                raise ValueError("Failed to prepare prediction data")
             
-        return self.scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1))
-
-predictor = EnhancedStockPredictor()
+            # Get the last sequence
+            last_sequence = X[-1:]
+            
+            predictions = []
+            current_sequence = last_sequence.copy()
+            
+            for _ in range(days):
+                # Predict next value
+                pred = self.model.predict(current_sequence, verbose=0)
+                scaled_pred = pred[0][0]
+                predictions.append(scaled_pred)
+                
+                # Create a new row with all features
+                # We'll use the predicted value for 'Close' and repeat the last known values for other features
+                new_row = np.zeros((1, self.last_scale_params['n_features']))
+                new_row[0, 0] = scaled_pred  # Set predicted Close price
+                new_row[0, 1:] = current_sequence[0, -1, 1:]  # Copy other features from last timestep
+                
+                # Update the sequence by removing the first timestep and adding the new prediction
+                current_sequence = np.concatenate([
+                    current_sequence[0, 1:], 
+                    new_row
+                ]).reshape(1, self.lookback_period, self.last_scale_params['n_features'])
+            
+            # Prepare for inverse transform
+            predictions = np.array(predictions).reshape(-1, 1)
+            dummy_features = np.zeros((len(predictions), self.last_scale_params['n_features'] - 1))
+            full_scaled_predictions = np.hstack([predictions, dummy_features])
+            
+            # Inverse transform to get actual prices
+            actual_predictions = self.scaler.inverse_transform(full_scaled_predictions)[:, 0]
+            
+            return actual_predictions.reshape(-1, 1)
+            
+        except Exception as e:
+            print(f"Error in predict_future: {str(e)}")
+            return None
 
 @app.route('/stock/<symbol>', methods=['GET'])
 def get_stock_data(symbol):
     try:
-        # Fetch stock data
+        # Fetch historical data - increased to 2 years for more training data
         stock = yf.Ticker(f"{symbol}.JK")
-        hist_data = stock.history(period="2y")  # Using 2 years of data for better training
+        hist_data = stock.history(period="2y")
         
         if hist_data.empty:
             return jsonify({
@@ -138,11 +227,10 @@ def get_stock_data(symbol):
                 'message': 'No data found for this symbol'
             }), 404
 
-        # Add technical indicators
-        hist_data = predictor.prepare_technical_features(hist_data)
-
-        # Train model and get predictions
-        future_prices = predictor.predict_future(hist_data)
+        # Get predictions
+        predictions = predictor.predict_future(hist_data)
+        if predictions is None:
+            raise ValueError("Failed to generate predictions")
         
         # Calculate price change
         price_change = ((hist_data['Close'].iloc[-1] - hist_data['Close'].iloc[-2]) / 
@@ -156,35 +244,22 @@ def get_stock_data(symbol):
         historical_data = [{
             'date': index.strftime('%Y-%m-%d'),
             'price': int(row['Close']),
-            'prediction': 0,
-            'volume': int(row['Volume']),
-            'sma20': int(row['SMA_20']) if not np.isnan(row['SMA_20']) else None,
-            'rsi': int(row['RSI']) if not np.isnan(row['RSI']) else None,
+            'volume': int(row['Volume'])
         } for index, row in hist_data.iterrows()]
 
-        # Add future predictions
+        # Add predictions
         prediction_data = [{
             'date': date.strftime('%Y-%m-%d'),
-            'price': 0,
-            'prediction': int(price[0]),
-            'volume': 0,
-            'sma20': None,
-            'rsi': None
-        } for date, price in zip(future_dates, future_prices)]
+            'prediction': int(pred[0]),
+        } for date, pred in zip(future_dates, predictions)]
 
         return jsonify({
             'status': 'success',
             'data': {
-                'symbol': symbol,
-                'name': IDX_STOCKS.get(symbol, 'Unknown'),
+                'name': symbol,
                 'currentPrice': int(hist_data['Close'].iloc[-1]),
-                'change': int(price_change),
-                'historicalData': historical_data + prediction_data,
-                'technicalIndicators': {
-                    'lastRSI': int(hist_data['RSI'].iloc[-1]),
-                    'lastMACD': int(hist_data['MACD'].iloc[-1]),
-                    'lastSMA20': int(hist_data['SMA_20'].iloc[-1])
-                }
+                'historicalData': historical_data,
+                'predictionData': prediction_data
             }
         })
 
@@ -194,5 +269,7 @@ def get_stock_data(symbol):
             'message': str(e)
         }), 500
 
+predictor = StockPredictor()
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)
