@@ -1,13 +1,49 @@
 import axios, { AxiosError } from 'axios';
 
-const API_URL = 'http://127.0.0.1:5001';
+const API_URL = 'http://127.0.0.1:80';
+
+interface Fundamentals {
+    marketCap: number | null;
+    sector: string | null;
+    industry: string | null;
+    netProfitMargin: number | null;
+    ROE: number | null;
+    ROA: number | null;
+    PE: number | null;
+    PB: number | null;
+    dividendYield: number | null;
+    fcfGrowth: number | null;
+    currentRatio: number | null;
+}
+
+interface TechnicalMetrics {
+    sma50: number;
+    sma200: number;
+    priceToSMA50: number;
+    priceToSMA200: number;
+    volumeAvg20: number;
+    volatility20: number;
+}
+
+interface ModelMetrics {
+    mape: number;
+    r2_score: number;
+    directional_accuracy: number;
+    rmse: number;
+    threshold_accuracy: number;
+}
+
+interface CompanyInfo {
+    name: string;
+    sector: string | null;
+    industry: string | null;
+}
 
 interface StockResponse {
     status: string;
     data: {
         name: string;
         currentPrice: number;
-        change: number;
         historicalData: Array<{
             date: string;
             price: number;
@@ -17,6 +53,9 @@ interface StockResponse {
             date: string;
             prediction: number;
         }>;
+        fundamentals: Fundamentals;
+        technicalMetrics: TechnicalMetrics;
+        modelMetrics: ModelMetrics;
     };
 }
 
