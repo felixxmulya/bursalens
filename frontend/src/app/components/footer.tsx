@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { faChartLine, faStar, faBuilding, faNewspaper, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import {faXTwitter, faFacebook,faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 
@@ -25,8 +26,8 @@ export default function Footer() {
     const socialLinks = [
         { href: "https://twitter.com", icon: faXTwitter, label: "Twitter" },
         { href: "https://facebook.com", icon: faFacebook, label: "Facebook" },
-        { href: "https://instagram.com", icon: faInstagram, label: "Instagram" },
-        { href: "https://linkedin.com", icon: faLinkedin, label: "LinkedIn" },
+        { href: "https://instagram.com/felix_mulya", icon: faInstagram, label: "Instagram" },
+        { href: "https://linkedin.com/https://www.linkedin.com/in/felix-ardy-mulya/", icon: faLinkedin, label: "LinkedIn" },
     ];
 
     return (
@@ -56,7 +57,7 @@ export default function Footer() {
                                     className="text-gray-400 hover:text-white transition-colors"
                                     aria-label={link.label}
                                 >
-                                    <FontAwesomeIcon icon={link.icon} className="w-6 h-6" />
+                                    <FontAwesomeIcon icon={link.icon as IconProp} className="w-6 h-6" />
                                 </Link>
                             ))}
                         </div>
