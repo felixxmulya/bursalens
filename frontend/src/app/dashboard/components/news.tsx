@@ -31,7 +31,7 @@ export default function News() {
     }, []);
 
     return (
-        <div className="container mx-auto md:my-32 h-full ">
+        <div className="mx-auto my-12 md:my-32 p-4 md:p-0 h-full">
             <h1 className="text-3xl font-bold text-center mb-6">
                 <FontAwesomeIcon icon={faNewspaper} /> Latest News
             </h1>

@@ -3,11 +3,12 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 export default function Loading() {
   return (
-    <div className="flex items-center justify-center h-[400px] bg-white rounded-lg shadow-md">
+    <div className="flex flex-col items-center justify-center h-screen">
       <FontAwesomeIcon 
-        icon={faSpinner} 
-        className="h-8 w-8 text-blue-600 animate-spin" 
+        icon={faSpinner}
+        className="h-16 w-16 text-blue-600 animate-spin" 
       />
+      <p className="text-2xl text-gray-800 mt-4">Loading..</p>
     </div>
   );
 }

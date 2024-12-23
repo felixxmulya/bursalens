@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://54.255.138.22:80';
+const API_BASE_URL = process.env.NEXT_PUBLIC_NEWS_API_URL;
 
 export const fetchNews = async (category: string = 'saham') => {
     console.log('data:', category);

@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import Loading from '../components/loading';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNewspaper } from '@fortawesome/free-solid-svg-icons';
 import { fetchNews } from '@/app/api/news';
@@ -18,7 +19,6 @@ export default function News() {
     };
 
     const lastNewsElementRef = useCallback(node => {
-        if (loading) return;
         if (observer.current) observer.current.disconnect();
         observer.current = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting && visibleNews < news.length) {
@@ -46,11 +46,7 @@ export default function News() {
 
     if (loading && news.length === 0) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                <div className="flex justify-center items-center h-64">
-                    <p className="text-gray-500 animate-spin"></p>
-                </div>
-            </div>
+            Loading()
         );
     }
 
