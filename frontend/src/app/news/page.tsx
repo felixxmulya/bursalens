@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Loading from '../components/loading';
+import Error from '../components/error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNewspaper } from '@fortawesome/free-solid-svg-icons';
 import { fetchNews } from '@/app/api/news';
@@ -35,7 +36,7 @@ export default function News() {
                 const data = await fetchNews();
                 setNews(data);
             } catch (error) {
-                console.error('Failed to load news:', error);
+                return <Error />;
             } finally {
                 setLoading(false);
             }

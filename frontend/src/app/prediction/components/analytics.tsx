@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { stockData } from '@/app/api/stock';
 import Loading from '@/app/components/loading';
-import Error from '@/app/prediction/components/stock/error';
+import Error from '@/app/components/error';
 import Info from '@/app/prediction/components/stock/info';
 import Charts from '@/app/prediction/components/stock/chart';
 import { faChartBar, faExchangeAlt, faPercent, faChartLine } from '@fortawesome/free-solid-svg-icons';
