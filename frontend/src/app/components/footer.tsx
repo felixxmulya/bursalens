@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine, faStar, faBuilding, faNewspaper, faEnvelope,faChartPie } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faStar, faBuilding, faNewspaper, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import {faXTwitter, faFacebook,faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 
 export default function Footer() {
@@ -18,7 +18,6 @@ export default function Footer() {
             links: [
                 { href: "/#about", text: "About Us", icon: faBuilding },
                 { href: "/news", text: "News", icon: faNewspaper },
-                // { href: "/contact", text: "Contact", icon: faEnvelope },
             ]
         }
     ];

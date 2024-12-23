@@ -14,7 +14,7 @@ export default function Prediction() {
 
     return (
         <div className='px-6 py-14 max-w-7xl mx-auto'>
-            <SearchBar 
+            <SearchBar
                 searchInput={searchInput}
                 setSearchInput={setSearchInput}
                 handleSearch={handleSearch}

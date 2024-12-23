@@ -33,12 +33,6 @@ interface ModelMetrics {
     threshold_accuracy: number;
 }
 
-interface CompanyInfo {
-    name: string;
-    sector: string | null;
-    industry: string | null;
-}
-
 interface StockResponse {
     status: string;
     data: {

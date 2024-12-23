@@ -11,7 +11,7 @@ export default function News() {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleNews, setVisibleNews] = useState(7);
-    const observer = useRef<any>();
+    const observer = useRef<IntersectionObserver | null>(null);
     const ITEMS_PER_LOAD = 6;
 
     const imageLoader = ({ src }) => {
