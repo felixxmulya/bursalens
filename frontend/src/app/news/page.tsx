@@ -47,22 +47,18 @@ export default function News() {
 
     if (loading && news.length === 0) {
         return (
-            Loading()
+            <Loading />
         );
     }
 
     if (!news.length) {
         return (
-            <div className="max-w-7xl mx-auto px-4 py-8">
-                <div className="flex justify-center items-center h-64">
-                    <p className="text-gray-500">No news available.</p>
-                </div>
-            </div>
+            <Error />
         );
     }
 
     const featuredNews = news[0]?.data;
-    const displayedNews = news.slice(1, visibleNews + 1);
+    const displayedNews = news.slice(3, visibleNews);
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
