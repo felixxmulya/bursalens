@@ -1,3 +1,4 @@
+"use client";
 import About from "./components/about";
 import Banner from "./components/banner";
 import Feature from "./components/feature";
