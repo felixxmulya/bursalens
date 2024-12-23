@@ -56,7 +56,6 @@ interface StockResponse {
 export const stockData = async (symbol: string) => {
     try {
         const response = await axios.get<StockResponse>(`${API_URL}/stock/${symbol}`);
-        console.log('response:', response);
         return response.data;
     } catch (error) {
         const axiosError = error as AxiosError;
