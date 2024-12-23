@@ -8,7 +8,7 @@ import { faChevronRight, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function News() {
-    const [news, setNews] = useState<any[]>([]);
+    const [news, setNews] = useState([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     const imageLoader = ({ src }) => {
@@ -32,7 +32,7 @@ export default function News() {
     }, []);
 
     return (
-        <div className="mx-auto my-12 md:my-32 p-4 md:p-0 h-full">
+        <div className="container mx-auto my-12 md:my-32 p-4 md:p-0 h-full">
             <h1 className="text-3xl font-bold text-center mb-6">
                 <FontAwesomeIcon icon={faNewspaper} /> Latest News
             </h1>

@@ -11,14 +11,14 @@ export default function News() {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visibleNews, setVisibleNews] = useState(7);
-    const observer = useRef();
+    const observer = useRef<any>();
     const ITEMS_PER_LOAD = 6;
 
     const imageLoader = ({ src }) => {
         return src;
     };
 
-    const lastNewsElementRef = useCallback(node => {
+    const lastNewsElementRef = useCallback((node: any) => {
         if (observer.current) observer.current.disconnect();
         observer.current = new IntersectionObserver(entries => {
             if (entries[0].isIntersecting && visibleNews < news.length) {
