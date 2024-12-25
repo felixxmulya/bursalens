@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_STOCK_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_KEY;
 
 interface Fundamentals {
     marketCap: number | null;
