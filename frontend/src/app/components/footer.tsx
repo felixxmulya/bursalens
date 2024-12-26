@@ -27,7 +27,7 @@ export default function Footer() {
         { href: "https://twitter.com", icon: faXTwitter, label: "Twitter" },
         { href: "https://facebook.com", icon: faFacebook, label: "Facebook" },
         { href: "https://instagram.com/felix_mulya", icon: faInstagram, label: "Instagram" },
-        { href: "https://linkedin.com/https://www.linkedin.com/in/felix-ardy-mulya/", icon: faLinkedin, label: "LinkedIn" },
+        { href: "https://www.linkedin.com/in/felix-ardy-mulya/", icon: faLinkedin, label: "LinkedIn" },
     ];
 
     return (
