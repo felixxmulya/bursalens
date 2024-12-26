@@ -7,7 +7,7 @@ An advanced stock market analysis platform combining deep learning LSTM predicti
 ### 🤖 LSTM Stock Prediction
 - **Advanced Neural Network Architecture**
   - Multi-layer LSTM with dropout layers
-  - Sequence-based prediction (30-day lookback)
+  - Sequence-based prediction (30-days lookback)
   - Dynamic feature engineering
   - Robust scaling and preprocessing
   - Early stopping for optimal training
