@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API;
+const API_URL = 'https://api.bursalens.xyz';
 
 interface Fundamentals {
     marketCap: number | null;
@@ -64,7 +64,7 @@ export const stockData = async (symbol: string) => {
         } else if (axiosError.request) {
             throw new Error('No response received from server');
         } else {
-            throw new Error('Error setting up the request');
+            return error;
         }
     }
 };

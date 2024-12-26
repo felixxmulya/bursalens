@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API;
+const API_BASE_URL = 'https://api.bursalens.xyz';
 
 export const fetchNews = async (category: string = 'saham') => {
   try {
