@@ -6,7 +6,7 @@ import Loading from '../components/loading';
 import Error from '../components/error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNewspaper } from '@fortawesome/free-solid-svg-icons';
-import { fetchNews } from '@/app/api/news';
+import { fetchNews } from '@/app/api/news-cnbc';
 
 export default function News() {
     const [news, setNews] = useState([]);
@@ -79,7 +79,15 @@ export default function News() {
                                 </div>
                                 <div className="md:w-1/2 p-6">
                                     <div className="flex items-center mb-2">
-                                        <span className="text-sm text-gray-600">{featuredNews.time}</span>
+                                        <span className="text-sm text-gray-600">
+                                            {new Date(featuredNews.time).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                            })}
+                                        </span>
                                     </div>
                                     <h2 className="text-2xl font-bold mb-3">{featuredNews.title}</h2>
                                     <p className="text-gray-600 mb-4">{featuredNews.description || featuredNews.title}</p>
@@ -118,7 +126,15 @@ export default function News() {
                             />
                             <div className="p-4">
                                 <div className="flex items-center mb-2">
-                                    <span className="text-sm text-gray-600">{item.data.time}</span>
+                                    <span className="text-sm text-gray-600">
+                                        {new Date(item.data.time).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                        })}
+                                    </span>
                                 </div>
                                 <h3 className="font-bold mb-2">{item.data.title}</h3>
                             </div>

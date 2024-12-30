@@ -2,14 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { fetchNews } from '@/app/api/news';
+import { fetchNews } from '@/app/api/news-cnbc';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronRight, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 
-
 export default function News() {
     const [news, setNews] = useState([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(true);
 
     const imageLoader = ({ src }) => {
         return src;
@@ -53,15 +52,26 @@ export default function News() {
                             rel="noopener noreferrer"
                             className="p-4 border rounded-lg shadow-sm hover:shadow-lg transition-shadow"
                         >
-                            <Image
-                                loader={imageLoader}
-                                src={item.data.image_thumbnail}
-                                alt={item.data.title}
-                                width={400}
-                                height={400}
-                                className="w-full h-48 object-cover rounded-md mb-4"
-                            />
-                            <p className="text-sm text-gray-600 mb-2">{item.data.time}</p>
+                            {item.data.image_thumbnail && (
+                                <div className="relative w-full h-48 mb-4">
+                                    <Image
+                                        loader={imageLoader}
+                                        src={item.data.image_thumbnail}
+                                        alt={item.data.title}
+                                        fill
+                                        className="object-cover rounded-md"
+                                    />
+                                </div>
+                            )}
+                            <p className="text-sm text-gray-600 mb-2">
+                                {new Date(item.data.time).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </p>
                             <h2 className="text-lg font-semibold mb-2">{item.data.title}</h2>
                         </Link>
                     ))}
