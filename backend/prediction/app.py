@@ -51,7 +51,7 @@ class StockPredictor:
         self.min_training_size = 100
         self.last_scale_params = None
 
-    def create_model(self, input_shape):
+    def lstm_model(self, input_shape):
         """Create LSTM model architecture"""
         model = Sequential([
             LSTM(units=100, return_sequences=True, input_shape=input_shape),
@@ -65,7 +65,7 @@ class StockPredictor:
         model.compile(optimizer=Adam(learning_rate=0.001), loss='mse')
         return model
 
-    def add_features(self, df):
+    def technical_features(self, df):
         """Create technical indicators for LSTM input"""
         df = df.copy()
 
@@ -94,7 +94,7 @@ class StockPredictor:
     def prepare_data(self, df):
         """Prepare data for LSTM training"""
         try:
-            data = self.add_features(df)
+            data = self.technical_features(df)
 
             feature_columns = ['Close', 'Returns', 'SMA20', 'SMA50', 'RSI', 'ROC', 'MACD', 'BB_width', 'Volume_Ratio']
 
@@ -173,7 +173,7 @@ class StockPredictor:
                 raise ValueError(f"Insufficient data: {len(X)} samples, need at least {self.min_training_size}")
 
             # Create and train the model
-            self.model = self.create_model(input_shape=(X.shape[1], X.shape[2]))
+            self.model = self.lstm_model(input_shape=(X.shape[1], X.shape[2]))
 
             # Split into training and validation sets
             split_idx = int(len(X) * (1 - self.validation_split))
@@ -415,4 +415,4 @@ def get_stock_data(symbol):
 predictor = StockPredictor()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port="8080", debug=True)

@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import Analytics from '@/app/prediction/components/analytics';
 import SearchBar from '@/app/prediction/components/stock/search';
+import Login from '@/app/components/login';
+import { SignInButton, SignedIn, SignedOut } from '@clerk/nextjs'
 
 export default function Prediction() {
     const [searchInput, setSearchInput] = useState('');
@@ -14,15 +16,20 @@ export default function Prediction() {
 
     return (
         <div className='px-6 py-14 max-w-7xl mx-auto'>
-            <SearchBar
-                searchInput={searchInput}
-                setSearchInput={setSearchInput}
-                handleSearch={handleSearch}
-            />
-            <Analytics symbol={symbol} />
-            <div className="my-8 text-center text-gray-500">
-                <p>Note: The predictions are not 100% accurate and please don&apos;t take the data as investment advice.</p>
-            </div>
+            <SignedIn>
+                <SearchBar
+                    searchInput={searchInput}
+                    setSearchInput={setSearchInput}
+                    handleSearch={handleSearch}
+                />
+                <Analytics symbol={symbol} />
+                <div className="my-8 text-center text-gray-500">
+                    <p>Note: The predictions are not 100% accurate and please don&apos;t take the data as investment advice.</p>
+                </div>
+            </SignedIn>
+            <SignedOut>
+                <Login/>
+            </SignedOut>
         </div>
     );
 }

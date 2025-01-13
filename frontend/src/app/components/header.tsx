@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBarsStaggered, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function Header() {
     const links = [
         { href: "/#about", text: "About Us" },
         { href: "/prediction", text: "Stock Prediction" },
-        { href: "/news", text: "News" },
+        { href: "/news", text: "News" }
     ];
 
     const toggleNavbar = () => {
@@ -22,17 +23,27 @@ export default function Header() {
     };
 
     return (
-        <header className="sticky top-0 z-50 flex items-center justify-between px-4 md:px-20 py-6 bg-white shadow-md">
+        <header className="sticky top-0 z-50 flex items-center justify-between px-4 md:px-28 py-6 bg-white shadow-md">
             <div className="flex items-center">
                 <Link className="text-2xl font-bold text-blue-600" href="/">BursaLens.</Link>
             </div>
-            <nav className="items-center space-x-8 hidden md:block">
+            <div className="items-center space-x-8 hidden md:block">
                 {links.map(({ href, text }) => (
                     <Link className="text-gray-600 hover:text-gray-900 font-semibold" key={href} href={href}>
                         {text}
                     </Link>
                 ))}
-            </nav>
+            </div>
+            <div className="hidden md:block">
+                <SignedOut>
+                    <div className="font-semibold bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-transform text-center">
+                        <SignInButton />
+                    </div>
+                </SignedOut>
+                <SignedIn>
+                    <UserButton />
+                </SignedIn>
+            </div>
             <button className="text-gray-600 hover:text-gray-900 block md:hidden" onClick={toggleNavbar}>
                 <FontAwesomeIcon icon={isOpen ? faTimes : faBarsStaggered} size="2x" />
             </button>
@@ -52,6 +63,14 @@ export default function Header() {
                             {text}
                         </Link>
                     ))}
+                    <SignedOut>
+                        <div className="font-semibold bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-transform text-center">
+                            <SignInButton />
+                        </div>
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton />
+                    </SignedIn>
                 </nav>
             </div>
         </header>
